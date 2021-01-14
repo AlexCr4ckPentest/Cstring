@@ -146,6 +146,39 @@ void string_free(string_t* string)
 
 
 /**
+ * @brief Reserve n bytes in heap for string
+ * 
+ * @param ptr pointer to existing string
+ * @param n size in bytes
+ * @return string
+ */
+string_t string_reserve(string_t* ptr, const size_t n)
+{
+#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
+    assert(("string: invalid magic number!" && __string_check_magic_number(*ptr)));
+#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+
+    const size_t allocated = string_allocated_size(*ptr);
+
+    assert(("string: reserving size must be greater than allocated size!" && n > allocated));
+
+    *ptr -= sizeof(struct __string_header);
+
+    *ptr = realloc(*ptr, n + sizeof(struct __string_header));
+    if (*ptr == NULL)
+    {
+        return NULL;
+    }
+
+    ((struct __string_header*)(*ptr))->allocated_size += n;
+
+    *ptr += sizeof(struct __string_header);
+    return *ptr;
+}
+
+
+
+/**
  * @brief Create and initialize a new string from C-string
  * 
  * @param c_string C-like string (aka. const char*)

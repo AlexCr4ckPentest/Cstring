@@ -17,6 +17,8 @@ string_t __string_allocate(const size_t n);
 string_t __string_realloc_if_need(string_t* ptr, const size_t _size, const size_t __size, const size_t new_size);
 void string_free(string_t* string);
 
+string_t string_reserve(string_t* ptr, const size_t n);
+
 string_t string_init(const char* c_string);
 string_t string_clone(const string_t string);
 string_t string_substring_create(const string_t str, const size_t init_pos, const size_t end_pos);

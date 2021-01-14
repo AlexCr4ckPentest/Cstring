@@ -40,14 +40,13 @@ string_t string_concat_n(string_t* dst, const string_t src, const size_t n);
 string_t string_c_concat(string_t* dst, const char* src);
 string_t string_c_concat_n(string_t* dst, const char* src, const size_t n);
 
-extern long string_char_pos(string_t string, const char ch);
-extern char* string_char_ptr(string_t string, const char ch);
+extern long string_char_pos(const string_t string, const char ch);
+extern char* string_char_ptr(const string_t string, const char ch);
 
 extern int string_contains(const string_t string, const char ch);
 extern int string_char_at(const string_t string, const size_t index);
 extern char* string_ptr_at(const string_t string, const size_t index);
 
-extern int string_contains_substring(const string_t string, const char* pattern);
 extern long string_substring_pos(const string_t string, const char* pattern);
 extern char* string_substring_ptr(const string_t string, const char* pattern);
 #ifdef __cplusplus

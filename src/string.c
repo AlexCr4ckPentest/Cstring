@@ -30,7 +30,7 @@ extern "C"
  * @brief Check string magic number (for security)
  *
  * @param string existing string
- * @return true if magic number is valid, otherwise - false
+ * @return 1 if magic number is valid, otherwise - 0
  */
 inline static int __string_check_magic_number(const string_t string)
 {
@@ -461,11 +461,13 @@ string_t string_swap(string_t* str1, string_t* str2)
 
 
 /**
- * @brief 
+ * @brief Concat two strings
  * 
- * @param dst 
- * @param src 
- * @return string_t 
+ * Call string_concat_n()
+ * 
+ * @param dst pointer to destination string
+ * @param src source string
+ * @return destination string
  */
 string_t string_concat(string_t* dst, const string_t src)
 {
@@ -480,12 +482,14 @@ string_t string_concat(string_t* dst, const string_t src)
 
 
 /**
- * @brief
+ * @brief Concat n elements from src to dst
  * 
- * @param dst
- * @param src
- * @param n
- * @return string_t
+ * Reallocate memory for destination string if allocated size of source string >
+ * 
+ * @param dst pointer to destination string 
+ * @param src existing source string
+ * @param n amount of elements
+ * @return destination string (if all is ok), otherwise - NULL (memory allocation error)
  */
 string_t string_concat_n(string_t* dst, const string_t src, const size_t n)
 {
@@ -514,11 +518,13 @@ string_t string_concat_n(string_t* dst, const string_t src, const size_t n)
 
 
 /**
- * @brief
+ * @brief Concat string and C-string
  * 
- * @param dst
- * @param src
- * @return string_t
+ * Call string_c_concat_n
+ * 
+ * @param dst pointer to destination string
+ * @param src C-string
+ * @return destination string
  */
 string_t string_c_concat(string_t* dst, const char* src)
 {
@@ -532,12 +538,14 @@ string_t string_c_concat(string_t* dst, const char* src)
 
 
 /**
- * @brief
+ * @brief Concat n elements from C-string src to dst
  * 
- * @param dst
- * @param src
- * @param n
- * @return string_t
+ * Reallocate memory for destination string if allocated size of source string >
+ * 
+ * @param dst pointer to destination string
+ * @param src C-string
+ * @param n amount of elements
+ * @return destination string (if all is ok), otherwise - NULL (memory allocation error)
  */
 string_t string_c_concat_n(string_t* dst, const char* src, const size_t n)
 {
@@ -563,14 +571,15 @@ string_t string_c_concat_n(string_t* dst, const char* src, const size_t n)
 }
 
 
+
 /**
- * @brief 
+ * @brief Get character position in an existing string
  * 
- * @param string 
- * @param ch 
- * @return size_t 
+ * @param string existring string
+ * @param ch character to find
+ * @return character (if found), otherwise - STRING_NPOS
  */
-inline long string_char_pos(string_t string, const char ch)
+inline long string_char_pos(const string_t string, const char ch)
 {
 #ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
     assert(("string: invalid magic number!" && __string_check_magic_number(string)));
@@ -583,13 +592,13 @@ inline long string_char_pos(string_t string, const char ch)
 
 
 /**
- * @brief 
+ * @brief Get pointer to character in an existing string
  * 
- * @param string 
- * @param ch 
- * @return char* 
+ * @param string existring string
+ * @param ch character to find
+ * @return pointer ot character (if found), otherwise - NULL
  */
-char* string_char_ptr(string_t string, const char ch)
+char* string_char_ptr(const string_t string, const char ch)
 {
 #ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
     assert(("string: invalid magic number!" && __string_check_magic_number(string)));
@@ -601,36 +610,11 @@ char* string_char_ptr(string_t string, const char ch)
 
 
 /**
- * @brief 
+ * @brief Get pointer character in string through index
  * 
- * @param string existing string
- * @param ch char to find
- * @return 1 if found, otherwise - 0 
- */
-inline int string_contains(string_t string, const char ch)
-{
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
-
-    while (*string)
-    {
-        if (*string++ == ch)
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-
-
-/**
- * @brief 
- * 
- * @param string 
- * @param index 
- * @return char 
+ * @param string existring string
+ * @param index index
+ * @return character at index
  */
 inline int string_char_at(const string_t string, const size_t index)
 {
@@ -647,11 +631,11 @@ inline int string_char_at(const string_t string, const size_t index)
 
 
 /**
- * @brief 
+ * @brief Get pointer to character in string through index
  * 
- * @param string 
- * @param index 
- * @return char* 
+ * @param string existing string
+ * @param index index
+ * @return pointer to character at index
  */
 inline char* string_ptr_at(const string_t string, const size_t index)
 {
@@ -668,29 +652,11 @@ inline char* string_ptr_at(const string_t string, const size_t index)
 
 
 /**
- * @brief 
+ * @brief Find substring in an existing string
  * 
- * @param string 
- * @param pattern 
- * @return int 
- */
-inline int string_contains_substring(const string_t string, const char* pattern)
-{
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
-
-    return strstr(string, pattern) != NULL;
-}
-
-
-
-/**
- * @brief 
- * 
- * @param string 
- * @param pattern 
- * @return size_t 
+ * @param string existing string
+ * @param pattern substring to find
+ * @return position of substring begin
  */
 inline long string_substring_pos(const string_t string, const char* pattern)
 {
@@ -704,11 +670,11 @@ inline long string_substring_pos(const string_t string, const char* pattern)
 
 
 /**
- * @brief 
+ * @brief Find substring in an existing string
  * 
- * @param string 
- * @param pattern 
- * @return char* 
+ * @param string existing string
+ * @param pattern substring to find
+ * @return pointer to beginning of substring
  */
 inline char* string_substring_ptr(const string_t string, const char* pattern)
 {

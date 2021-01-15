@@ -13,6 +13,13 @@ struct __string_header;
 extern "C"
 {
 #endif // __cplusplus
+extern __string_check_magic_number(const string_t string);
+extern size_t* const __string_length_address(const string_t ptr);
+extern size_t* const __string_allocated_size_address(const string_t ptr);
+
+extern string_t __string_allocate_hdr(void);
+extern string_t string_empty(void);
+
 string_t __string_allocate(const size_t n);
 string_t __string_realloc_if_need(string_t* ptr, const size_t _size, const size_t __size, const size_t new_size);
 void string_free(string_t* string);

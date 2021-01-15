@@ -32,7 +32,7 @@ extern "C"
  * @param string existing string
  * @return 1 if magic number is valid, otherwise - 0
  */
-inline static int __string_check_magic_number(const string_t string)
+inline int __string_check_magic_number(const string_t string)
 {
     return (((struct __string_header*)(string - sizeof(struct __string_header)))->magic_number == _STRING_MAGIC_NUMBER_);
 }
@@ -46,7 +46,7 @@ inline static int __string_check_magic_number(const string_t string)
  * @param ptr string
  * @return pointer to struct field (length)
  */
-inline static size_t* __string_length_address(const string_t ptr)
+inline size_t* const __string_length_address(const string_t ptr)
 {
     return &(((struct __string_header*)(ptr - sizeof(struct __string_header)))->length); // Warning: unaligned pointer value
 }
@@ -59,7 +59,7 @@ inline static size_t* __string_length_address(const string_t ptr)
  * @param ptr string
  * @return pointer to struct field (allocated_size)
  */
-inline static size_t* __string_allocated_size_address(const string_t ptr)
+inline size_t* const __string_allocated_size_address(const string_t ptr)
 {
     return &(((struct __string_header*)(ptr - sizeof(struct __string_header)))->allocated_size); // Warning: unaligned pointer value
 }

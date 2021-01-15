@@ -332,8 +332,6 @@ inline int string_c_compare(const string_t str1, const char* str2)
 /**
  * @brief Copy all elements from string src to dst
  * 
- * Call string_c_copy_n()
- * 
  * @param dst destionation string
  * @param src source string
  * @return destionation string
@@ -345,7 +343,20 @@ string_t string_copy(string_t* dst, const string_t src)
     assert(("string: invalid pointer!" && __string_check_magic_number(src)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
-    return string_copy_n(dst, src, string_length(src));
+    const size_t dst_allocated_size = string_allocated_size(*dst);
+    const size_t src_length = string_length(src);
+
+    *dst = __string_realloc_if_need(dst, src_length, dst_allocated_size - sizeof(struct __string_header), dst_allocated_size + src_length);
+
+    if (*dst == NULL)
+    {
+        return NULL;
+    }
+
+    memcpy(*dst, src, src_length + 1);
+    *__string_length_address(*dst) = src_length;
+
+    return *dst;
 }
 
 
@@ -373,7 +384,6 @@ string_t string_copy_n(string_t* dst, const string_t src, const size_t n)
     }
 
     const size_t dst_allocated_size = string_allocated_size(*dst);
-
     *dst = __string_realloc_if_need(dst, n, dst_allocated_size - sizeof(struct __string_header), dst_allocated_size + n);
 
     if (*dst == NULL)
@@ -393,7 +403,6 @@ string_t string_copy_n(string_t* dst, const string_t src, const size_t n)
  * @brief Copy all elements from string src to dst
  * 
  * Warning! This function requires C-string as 2-d argument!!! NOT string_t!
- * Call string_c_copy_n()
  * 
  * @param dst destionation string
  * @param src source C-string
@@ -405,7 +414,20 @@ string_t string_c_copy(string_t* dst, const char* src)
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
-    return string_c_copy_n(dst, src, strlen(src));
+    const size_t dst_allocated_size = string_allocated_size(*dst);
+    const size_t src_length = strlen(src);
+
+    *dst = __string_realloc_if_need(dst, src_length, dst_allocated_size - sizeof(struct __string_header), dst_allocated_size + src_length);
+
+    if (*dst == NULL)
+    {
+        return NULL;
+    }
+
+    memcpy(*dst, src, src_length + 1);
+    *__string_length_address(*dst) = src_length;
+
+    return *dst;
 }
 
 
@@ -432,8 +454,7 @@ string_t string_c_copy_n(string_t* dst, const char* src, const size_t n)
         return *dst;
     }
 
-    const size_t dst_allocated_size = string_allocated_size(*dst); 
-    
+    const size_t dst_allocated_size = string_allocated_size(*dst);
     *dst = __string_realloc_if_need(dst, n, dst_allocated_size - sizeof(struct __string_header), dst_allocated_size + n);
 
     if (*dst == NULL)

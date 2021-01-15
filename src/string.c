@@ -147,25 +147,6 @@ string_t __string_realloc_if_need(string_t* ptr, const size_t _size, const size_
 
 
 /**
- * @brief Free allocated memory block and invalidate a pointer
- * 
- * @param string pointer to existing string
- */
-void string_free(string_t* string)
-{
-    if (*string != NULL)
-    {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-        assert(("string: invalid magic number!" && __string_check_magic_number(*string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
-        free(*string - sizeof(struct __string_header));
-        *string = NULL;
-    }
-}
-
-
-
-/**
  * @brief Create an empty string (string header only)
  * 
  * @return user pointer 
@@ -286,6 +267,25 @@ string_t string_substring_create(const string_t str, const size_t init_pos, cons
     *__string_length_address(substring) = difference;
 
     return substring;
+}
+
+
+
+/**
+ * @brief Free allocated memory block and invalidate a pointer
+ * 
+ * @param string pointer to existing string
+ */
+void string_free(string_t* string)
+{
+    if (*string != NULL)
+    {
+#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
+        assert(("string: invalid magic number!" && __string_check_magic_number(*string)));
+#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+        free(*string - sizeof(struct __string_header));
+        *string = NULL;
+    }
 }
 
 
@@ -734,6 +734,7 @@ inline long string_substring_pos(const string_t string, const char* pattern)
 }
 
 
+
 /**
  * @brief Find substring in an existing string
  * 
@@ -749,4 +750,3 @@ inline char* string_substring_ptr(const string_t string, const char* pattern)
 
     return strstr(string, pattern);
 }
-

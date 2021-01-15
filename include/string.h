@@ -13,7 +13,10 @@ struct __string_header;
 extern "C"
 {
 #endif // __cplusplus
+#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
 extern __string_check_magic_number(const string_t string);
+#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+
 extern size_t* const __string_length_address(const string_t ptr);
 extern size_t* const __string_allocated_size_address(const string_t ptr);
 

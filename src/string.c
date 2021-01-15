@@ -22,10 +22,6 @@ struct __attribute__((packed, aligned(1))) __string_header
 #ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
 #undef NDEBUG
 #include <assert.h>
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
 /**
  * @brief Check string magic number (for security)
  *
@@ -63,9 +59,6 @@ inline size_t* const __string_allocated_size_address(const string_t ptr)
 {
     return &(((struct __string_header*)(ptr - sizeof(struct __string_header)))->allocated_size); // Warning: unaligned pointer value
 }
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 
 
 

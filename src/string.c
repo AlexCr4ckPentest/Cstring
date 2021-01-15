@@ -2,6 +2,7 @@
 
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 
@@ -785,4 +786,148 @@ inline char* string_substring_ptr(const string_t string, const char* pattern)
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return strstr(string, pattern);
+}
+
+
+
+/**
+ * @brief Convert string to long double
+ * 
+ * @param string existring string
+ * @param endptr pointer to an already allocated object of type char* for the next numerical value
+ * @return long double value if ok, otherwise - HUGE_VAL
+ * 
+ * source: http://www.cplusplus.com/reference/cstdlib/strtold/
+ */
+inline long double string_to_ld(const string_t string, const char** endptr)
+{
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
+
+    return strtold(string, endptr);
+}
+
+
+
+/**
+ * @brief Convert string to double
+ * 
+ * @param string existring string
+ * @param endptr pointer to an already allocated object of type char* for the next numerical value
+ * @return double value if ok, otherwise - HUGE_VAL
+ * 
+ * source: http://www.cplusplus.com/reference/cstdlib/strtod/
+ */
+inline double string_to_d(const string_t string, const char** endptr)
+{
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
+
+    return strtod(string, endptr);
+}
+
+
+
+/**
+ * @brief Convert string to float
+ * 
+ * @param string existring string
+ * @param endptr pointer to an already allocated object of type char* for the next numerical value
+ * @return float value if ok, otherwise - HUGE_VAL
+ * 
+ * source: http://www.cplusplus.com/reference/cstdlib/strtof/
+ */
+inline float string_to_f(const string_t string, const char** endptr)
+{
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
+
+    return strtof(string, endptr);
+}
+
+
+
+/**
+ * @brief Convert string to unsigned long long
+ * 
+ * @param string existring string
+ * @param endptr pointer to an already allocated object of type char* for the next numerical value
+ * @param base numerical base (radix)
+ * @return unsigned long long value if ok, otherwise - zero value
+ * 
+ * source: http://www.cplusplus.com/reference/cstdlib/strtoull/
+ */
+inline unsigned long long string_to_ull(const string_t string, const char** endptr, int base)
+{
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
+
+    return strtoull(string, endptr, base);
+}
+
+
+
+/**
+ * @brief Convert string to long long
+ * 
+ * @param string existring string
+ * @param endptr pointer to an already allocated object of type char* for the next numerical value
+ * @param base numerical base (radix)
+ * @return long long value if ok, otherwise - zero value
+ * 
+ * source: http://www.cplusplus.com/reference/cstdlib/strtoll/
+ */
+inline long long string_to_ll(const string_t string, const char** endptr, int base)
+{
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
+
+    return strtoll(string, endptr, base);
+}
+
+
+
+/**
+ * @brief Convert string to unsigned long
+ * 
+ * @param string existring string
+ * @param endptr pointer to an already allocated object of type char* for the next numerical value
+ * @param base numerical base (radix)
+ * @return unsigned long value if ok, otherwise - zero value
+ * 
+ * source: http://www.cplusplus.com/reference/cstdlib/strtoul/
+ */
+inline unsigned long string_to_ul(const string_t string, const char** endptr, int base)
+{
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
+
+    return strtoul(string, endptr, base);
+}
+
+
+
+/**
+ * @brief Convert string to long
+ * 
+ * @param string existring string
+ * @param endptr pointer to an already allocated object of type char* for the next numerical value
+ * @param base numerical base (radix)
+ * @return long value if ok, otherwise - zero value
+ * 
+ * source: http://www.cplusplus.com/reference/cstdlib/strtol/
+ */
+inline long string_to_l(const string_t string, const char** endptr, int base)
+{
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
+
+    return strtol(string, endptr, base);
 }

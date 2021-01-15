@@ -62,6 +62,14 @@ extern char* string_ptr_at(const string_t string, const size_t index);
 
 extern long string_substring_pos(const string_t string, const char* pattern);
 extern char* string_substring_ptr(const string_t string, const char* pattern);
+
+extern long double string_to_ld(const string_t string, const char** endptr);
+extern double string_to_d(const string_t string, const char** endptr);
+extern float string_to_f(const string_t string, const char** endptr);
+extern unsigned long long string_to_ull(const string_t string, const char** endptr, int base);
+extern long long string_to_ll(const string_t string, const char** endptr, int base);
+extern unsigned long string_to_ul(const string_t string, const char** endptr, int base);
+extern long string_to_l(const string_t string, const char** endptr, int base);
 #ifdef __cplusplus
 }
 #endif // __cplusplus

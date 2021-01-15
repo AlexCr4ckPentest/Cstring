@@ -184,7 +184,7 @@ string_t string_reserve(string_t* ptr, const size_t n)
  * @param c_string C-like string (aka. const char*)
  * @return new string
  */
-string_t string_init(const char* c_string)
+string_t string_create(const char* c_string)
 {
     const size_t string_length = strlen(c_string);
     string_t new_string = __string_allocate(string_length + 1);

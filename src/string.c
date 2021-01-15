@@ -64,33 +64,6 @@ inline size_t* const __string_allocated_size_address(const string_t ptr)
 
 
 /**
- * @brief Allocate memory for string header only
- * 
- * @return pointer
- */
-inline string_t __string_allocate_hdr(void)
-{    
-    string_t raw_memory = malloc(sizeof(struct __string_header) + 1); // +1 for user pointer safety
-
-    if (raw_memory == NULL)
-    {
-        return NULL;
-    }
-
-    struct __string_header hdr = {
-        .allocated_size = sizeof(struct __string_header) + 1,
-        .length = 0,
-        .magic_number = _STRING_MAGIC_NUMBER_
-    };
-
-    *((struct __string_header*)raw_memory) = hdr;
-
-    return raw_memory;
-}
-
-
-
-/**
  * @brief Allocate n + sizeof(struct __string_header) bytes of raw memory
  * 
  * @param n bytes to allocate
@@ -148,18 +121,6 @@ string_t __string_realloc_if_need(string_t* ptr, const size_t _size, const size_
 
 
 /**
- * @brief Create an empty string (string header only)
- * 
- * @return user pointer 
- */
-inline string_t string_empty(void)
-{
-    return (__string_allocate_hdr() + sizeof(struct __string_header));
-}
-
-
-
-/**
  * @brief Create and initialize a new string from C-string
  * 
  * @param c_string C-like string (aka. const char*)
@@ -210,25 +171,31 @@ string_t string_clone(const string_t string)
  */
 string_t string_reserve(string_t* ptr, const size_t n)
 {
+    if (*ptr == NULL) // if string is empty (NULL)
+    {
+        *ptr = __string_allocate(n);
+    }
+    else
+    {
 #ifndef _STRING_F_NO_CHECK_STRING_PTR_
-    assert(("string: invalid pointer!" && __string_check_magic_number(*ptr)));
+        assert(("string: invalid pointer!" && __string_check_magic_number(*ptr)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
-    const size_t allocated = string_allocated_size(*ptr);
+        const size_t allocated = string_allocated_size(*ptr);
+        assert(("string: reserving size must be greater than allocated size!" && n > allocated));
 
-    assert(("string: reserving size must be greater than allocated size!" && n > allocated));
+        *ptr -= sizeof(struct __string_header);
 
-    *ptr -= sizeof(struct __string_header);
+        *ptr = realloc(*ptr, n + sizeof(struct __string_header));
+        if (*ptr == NULL)
+        {
+            return NULL;
+        }
 
-    *ptr = realloc(*ptr, n + sizeof(struct __string_header));
-    if (*ptr == NULL)
-    {
-        return NULL;
+        ((struct __string_header*)(*ptr))->allocated_size += n;
+
+        *ptr += sizeof(struct __string_header);
     }
-
-    ((struct __string_header*)(*ptr))->allocated_size += n;
-
-    *ptr += sizeof(struct __string_header);
     return *ptr;
 }
 
@@ -799,7 +766,7 @@ inline char* string_substring_ptr(const string_t string, const char* pattern)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtold/
  */
-inline long double string_to_ld(const string_t string, const char** endptr)
+inline long double string_to_ld(const string_t string, char** endptr)
 {
 #ifndef _STRING_F_NO_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
@@ -819,7 +786,7 @@ inline long double string_to_ld(const string_t string, const char** endptr)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtod/
  */
-inline double string_to_d(const string_t string, const char** endptr)
+inline double string_to_d(const string_t string, char** endptr)
 {
 #ifndef _STRING_F_NO_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
@@ -839,7 +806,7 @@ inline double string_to_d(const string_t string, const char** endptr)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtof/
  */
-inline float string_to_f(const string_t string, const char** endptr)
+inline float string_to_f(const string_t string, char** endptr)
 {
 #ifndef _STRING_F_NO_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
@@ -860,7 +827,7 @@ inline float string_to_f(const string_t string, const char** endptr)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtoull/
  */
-inline unsigned long long string_to_ull(const string_t string, const char** endptr, int base)
+inline unsigned long long string_to_ull(const string_t string, char** endptr, int base)
 {
 #ifndef _STRING_F_NO_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
@@ -881,7 +848,7 @@ inline unsigned long long string_to_ull(const string_t string, const char** endp
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtoll/
  */
-inline long long string_to_ll(const string_t string, const char** endptr, int base)
+inline long long string_to_ll(const string_t string, char** endptr, int base)
 {
 #ifndef _STRING_F_NO_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
@@ -902,7 +869,7 @@ inline long long string_to_ll(const string_t string, const char** endptr, int ba
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtoul/
  */
-inline unsigned long string_to_ul(const string_t string, const char** endptr, int base)
+inline unsigned long string_to_ul(const string_t string, char** endptr, int base)
 {
 #ifndef _STRING_F_NO_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
@@ -923,7 +890,7 @@ inline unsigned long string_to_ul(const string_t string, const char** endptr, in
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtol/
  */
-inline long string_to_l(const string_t string, const char** endptr, int base)
+inline long string_to_l(const string_t string, char** endptr, int base)
 {
 #ifndef _STRING_F_NO_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));

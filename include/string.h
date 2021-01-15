@@ -22,11 +22,9 @@ extern int __string_check_magic_number(const string_t string);
 extern size_t* const __string_length_address(const string_t ptr);
 extern size_t* const __string_allocated_size_address(const string_t ptr);
 
-extern string_t __string_allocate_hdr(void);
 string_t __string_allocate(const size_t n);
 string_t __string_realloc_if_need(string_t* ptr, const size_t _size, const size_t __size, const size_t new_size);
 
-extern string_t string_empty(void);
 string_t string_create(const char* c_string);
 string_t string_clone(const string_t string);
 string_t string_reserve(string_t* ptr, const size_t n);
@@ -63,13 +61,13 @@ extern char* string_ptr_at(const string_t string, const size_t index);
 extern long string_substring_pos(const string_t string, const char* pattern);
 extern char* string_substring_ptr(const string_t string, const char* pattern);
 
-extern long double string_to_ld(const string_t string, const char** endptr);
-extern double string_to_d(const string_t string, const char** endptr);
-extern float string_to_f(const string_t string, const char** endptr);
-extern unsigned long long string_to_ull(const string_t string, const char** endptr, int base);
-extern long long string_to_ll(const string_t string, const char** endptr, int base);
-extern unsigned long string_to_ul(const string_t string, const char** endptr, int base);
-extern long string_to_l(const string_t string, const char** endptr, int base);
+extern long double string_to_ld(const string_t string, char** endptr);
+extern double string_to_d(const string_t string, char** endptr);
+extern float string_to_f(const string_t string, char** endptr);
+extern unsigned long long string_to_ull(const string_t string, char** endptr, int base);
+extern long long string_to_ll(const string_t string, char** endptr, int base);
+extern unsigned long string_to_ul(const string_t string, char** endptr, int base);
+extern long string_to_l(const string_t string, char** endptr, int base);
 #ifdef __cplusplus
 }
 #endif // __cplusplus

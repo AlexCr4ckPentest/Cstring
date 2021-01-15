@@ -63,6 +63,33 @@ inline size_t* const __string_allocated_size_address(const string_t ptr)
 
 
 /**
+ * @brief Allocate memory for string header only
+ * 
+ * @return pointer
+ */
+inline string_t __string_allocate_hdr(void)
+{    
+    string_t raw_memory = malloc(sizeof(struct __string_header) + 1); // +1 for user pointer safety
+
+    if (raw_memory == NULL)
+    {
+        return NULL;
+    }
+
+    struct __string_header hdr = {
+        .allocated_size = sizeof(struct __string_header) + 1,
+        .length = 0,
+        .magic_number = _STRING_MAGIC_NUMBER_
+    };
+
+    *((struct __string_header*)raw_memory) = hdr;
+
+    return raw_memory;
+}
+
+
+
+/**
  * @brief Allocate n + sizeof(struct __string_header) bytes of raw memory
  * 
  * @param n bytes to allocate
@@ -139,34 +166,13 @@ void string_free(string_t* string)
 
 
 /**
- * @brief Reserve n bytes in heap for string
+ * @brief Create an empty string (string header only)
  * 
- * @param ptr pointer to existing string
- * @param n size in bytes
- * @return string
+ * @return user pointer 
  */
-string_t string_reserve(string_t* ptr, const size_t n)
+inline string_t string_empty(void)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*ptr)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
-
-    const size_t allocated = string_allocated_size(*ptr);
-
-    assert(("string: reserving size must be greater than allocated size!" && n > allocated));
-
-    *ptr -= sizeof(struct __string_header);
-
-    *ptr = realloc(*ptr, n + sizeof(struct __string_header));
-    if (*ptr == NULL)
-    {
-        return NULL;
-    }
-
-    ((struct __string_header*)(*ptr))->allocated_size += n;
-
-    *ptr += sizeof(struct __string_header);
-    return *ptr;
+    return (__string_allocate_hdr() + sizeof(struct __string_header));
 }
 
 
@@ -209,6 +215,39 @@ string_t string_clone(const string_t string)
     *__string_length_address(copy) = length;
 
     return copy;
+}
+
+
+
+/**
+ * @brief Reserve n bytes in heap for string
+ * 
+ * @param ptr pointer to existing string
+ * @param n size in bytes
+ * @return string
+ */
+string_t string_reserve(string_t* ptr, const size_t n)
+{
+#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
+    assert(("string: invalid magic number!" && __string_check_magic_number(*ptr)));
+#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+
+    const size_t allocated = string_allocated_size(*ptr);
+
+    assert(("string: reserving size must be greater than allocated size!" && n > allocated));
+
+    *ptr -= sizeof(struct __string_header);
+
+    *ptr = realloc(*ptr, n + sizeof(struct __string_header));
+    if (*ptr == NULL)
+    {
+        return NULL;
+    }
+
+    ((struct __string_header*)(*ptr))->allocated_size += n;
+
+    *ptr += sizeof(struct __string_header);
+    return *ptr;
 }
 
 

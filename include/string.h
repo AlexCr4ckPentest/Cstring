@@ -14,23 +14,22 @@ extern "C"
 {
 #endif // __cplusplus
 #ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-extern __string_check_magic_number(const string_t string);
+extern int __string_check_magic_number(const string_t string);
 #endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
 
 extern size_t* const __string_length_address(const string_t ptr);
 extern size_t* const __string_allocated_size_address(const string_t ptr);
 
 extern string_t __string_allocate_hdr(void);
-extern string_t string_empty(void);
-
 string_t __string_allocate(const size_t n);
 string_t __string_realloc_if_need(string_t* ptr, const size_t _size, const size_t __size, const size_t new_size);
 void string_free(string_t* string);
 
-string_t string_reserve(string_t* ptr, const size_t n);
 
+extern string_t string_empty(void);
 string_t string_create(const char* c_string);
 string_t string_clone(const string_t string);
+string_t string_reserve(string_t* ptr, const size_t n);
 string_t string_substring_create(const string_t str, const size_t init_pos, const size_t end_pos);
 
 extern size_t string_length(const string_t string);

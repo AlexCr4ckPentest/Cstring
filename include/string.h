@@ -6,16 +6,18 @@
 
 #define STRING_NPOS -1
 
+// string type
 typedef char* string_t;
+
 struct __string_header;
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif // __cplusplus
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
 extern int __string_check_magic_number(const string_t string);
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
 extern size_t* const __string_length_address(const string_t ptr);
 extern size_t* const __string_allocated_size_address(const string_t ptr);
@@ -44,6 +46,7 @@ string_t string_c_copy_n(string_t* dst, const char* src, const size_t n);
 
 string_t string_move(string_t* dst, string_t* src);
 string_t string_swap(string_t* str1, string_t* str2);
+extern string_t string_reverse(string_t string);
 
 string_t string_concat(string_t* dst, const string_t src);
 string_t string_concat_n(string_t* dst, const string_t src, const size_t n);

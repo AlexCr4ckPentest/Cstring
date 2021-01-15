@@ -19,7 +19,7 @@ struct __attribute__((packed, aligned(1))) __string_header
 
 
 
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
 #undef NDEBUG
 #include <assert.h>
 /**
@@ -32,7 +32,7 @@ inline int __string_check_magic_number(const string_t string)
 {
     return (((struct __string_header*)(string - sizeof(struct __string_header)))->magic_number == _STRING_MAGIC_NUMBER_);
 }
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
 
 
@@ -185,9 +185,9 @@ string_t string_create(const char* c_string)
  */
 string_t string_clone(const string_t string)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     const size_t length = string_length(string);
     string_t copy = __string_allocate(length + 1);
@@ -209,9 +209,9 @@ string_t string_clone(const string_t string)
  */
 string_t string_reserve(string_t* ptr, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*ptr)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*ptr)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     const size_t allocated = string_allocated_size(*ptr);
 
@@ -243,9 +243,9 @@ string_t string_reserve(string_t* ptr, const size_t n)
  */
 string_t string_substring_create(const string_t str, const size_t init_pos, const size_t end_pos)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(str)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(str)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     if (init_pos >= end_pos)
     {
@@ -280,9 +280,9 @@ void string_free(string_t* string)
 {
     if (*string != NULL)
     {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-        assert(("string: invalid magic number!" && __string_check_magic_number(*string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+        assert(("string: invalid pointer!" && __string_check_magic_number(*string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
         free(*string - sizeof(struct __string_header));
         *string = NULL;
     }
@@ -298,9 +298,9 @@ void string_free(string_t* string)
  */
 inline size_t string_length(const string_t string)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return *__string_length_address(string);
 }
@@ -315,9 +315,9 @@ inline size_t string_length(const string_t string)
  */
 inline size_t string_allocated_size(const string_t string)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return *__string_allocated_size_address(string);
 }
@@ -333,10 +333,10 @@ inline size_t string_allocated_size(const string_t string)
  */
 inline int string_compare(const string_t str1, const string_t str2)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(str1)));
-    assert(("string: invalid magic number!" && __string_check_magic_number(str2)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(str1)));
+    assert(("string: invalid pointer!" && __string_check_magic_number(str2)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return strcmp(str1, str2);
 }
@@ -352,9 +352,9 @@ inline int string_compare(const string_t str1, const string_t str2)
  */
 inline int string_c_compare(const string_t str1, const char* str2)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(str1)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(str1)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return strcmp(str1, str2);
 }
@@ -372,10 +372,10 @@ inline int string_c_compare(const string_t str1, const char* str2)
  */
 string_t string_copy(string_t* dst, const string_t src)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-    assert(("string: invalid magic number!" && __string_check_magic_number(src)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+    assert(("string: invalid pointer!" && __string_check_magic_number(src)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return string_copy_n(dst, src, string_length(src));
 }
@@ -394,10 +394,10 @@ string_t string_copy(string_t* dst, const string_t src)
  */
 string_t string_copy_n(string_t* dst, const string_t src, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-    assert(("string: invalid magic number!" && __string_check_magic_number(src)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+    assert(("string: invalid pointer!" && __string_check_magic_number(src)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     if (n == 0)
     {
@@ -433,9 +433,9 @@ string_t string_copy_n(string_t* dst, const string_t src, const size_t n)
  */
 string_t string_c_copy(string_t* dst, const char* src)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return string_c_copy_n(dst, src, strlen(src));
 }
@@ -455,9 +455,9 @@ string_t string_c_copy(string_t* dst, const char* src)
  */
 string_t string_c_copy_n(string_t* dst, const char* src, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     if (n == 0)
     {
@@ -490,10 +490,10 @@ string_t string_c_copy_n(string_t* dst, const char* src, const size_t n)
  */
 string_t string_move(string_t* dst, string_t* src)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-    assert(("string: invalid magic number!" && __string_check_magic_number(*src)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+    assert(("string: invalid pointer!" && __string_check_magic_number(*src)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     string_copy(dst, *src);
     string_free(src);
@@ -511,16 +511,52 @@ string_t string_move(string_t* dst, string_t* src)
  */
 string_t string_swap(string_t* str1, string_t* str2)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*str1)));
-    assert(("string: invalid magic number!" && __string_check_magic_number(*str2)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*str1)));
+    assert(("string: invalid pointer!" && __string_check_magic_number(*str2)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     string_t tmp = *str1;
     *str1 = *str2;
     *str2 = tmp;
 
     return *str1;
+}
+
+
+
+/**
+ * @brief Reverse the string
+ * 
+ * @param string existring string
+ * @return reversed string 
+ */
+inline string_t string_reverse(string_t string)
+{
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
+
+    const size_t str_length = string_length(string);
+    char tmp = 0;
+
+#if 1
+    for (size_t i = 0; i < str_length / 2; i++)
+    {
+        tmp = string[i];
+        string[i] = string[str_length - i - 1];
+        string[str_length - i - 1] = tmp;
+    }
+#else
+    for (size_t i = 0, j = str_length - 1; i < j; i++,j--)
+    {
+        tmp = string[i];
+        string[i] = string[j];
+        string[j] = tmp;
+    }
+#endif
+
+    return string;
 }
 
 
@@ -536,10 +572,10 @@ string_t string_swap(string_t* str1, string_t* str2)
  */
 string_t string_concat(string_t* dst, const string_t src)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-    assert(("string: invalid magic number!" && __string_check_magic_number(src)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+    assert(("string: invalid pointer!" && __string_check_magic_number(src)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return string_concat_n(dst, src, string_length(src));
 }
@@ -558,10 +594,10 @@ string_t string_concat(string_t* dst, const string_t src)
  */
 string_t string_concat_n(string_t* dst, const string_t src, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-    assert(("string: invalid magic number!" && __string_check_magic_number(src)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+    assert(("string: invalid pointer!" && __string_check_magic_number(src)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     const size_t dst_allocated_size = string_allocated_size(*dst);
 
@@ -593,9 +629,9 @@ string_t string_concat_n(string_t* dst, const string_t src, const size_t n)
  */
 string_t string_c_concat(string_t* dst, const char* src)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return string_c_concat_n(dst, src, strlen(src));
 }
@@ -614,9 +650,9 @@ string_t string_c_concat(string_t* dst, const char* src)
  */
 string_t string_c_concat_n(string_t* dst, const char* src, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(*dst)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     const size_t dst_allocated_size = string_allocated_size(*dst);
 
@@ -646,9 +682,9 @@ string_t string_c_concat_n(string_t* dst, const char* src, const size_t n)
  */
 inline long string_char_pos(const string_t string, const char ch)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     const char* ptr = strchr(string, ch);
     return (ptr == NULL ? STRING_NPOS : (ptr - string));
@@ -665,9 +701,9 @@ inline long string_char_pos(const string_t string, const char ch)
  */
 char* string_char_ptr(const string_t string, const char ch)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return strchr(string, ch);
 }
@@ -683,9 +719,9 @@ char* string_char_ptr(const string_t string, const char ch)
  */
 inline int string_char_at(const string_t string, const size_t index)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     const size_t length = string_length(string);
     assert(("string: index out of range!" && index < length));
@@ -704,9 +740,9 @@ inline int string_char_at(const string_t string, const size_t index)
  */
 inline char* string_ptr_at(const string_t string, const size_t index)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     const size_t length = string_length(string);
     assert(("string: index out of range!" && index < length));
@@ -725,9 +761,9 @@ inline char* string_ptr_at(const string_t string, const size_t index)
  */
 inline long string_substring_pos(const string_t string, const char* pattern)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     const char* substr_begin = strstr(string, pattern);
     return (substr_begin == NULL ? STRING_NPOS : substr_begin - string);
@@ -744,9 +780,9 @@ inline long string_substring_pos(const string_t string, const char* pattern)
  */
 inline char* string_substring_ptr(const string_t string, const char* pattern)
 {
-#ifndef _STRING_F_NO_CHECK_MAGIC_NUMBER_
-    assert(("string: invalid magic number!" && __string_check_magic_number(string)));
-#endif // _STRING_F_NO_CHECK_MAGIC_NUMBER_
+#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+    assert(("string: invalid pointer!" && __string_check_magic_number(string)));
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return strstr(string, pattern);
 }

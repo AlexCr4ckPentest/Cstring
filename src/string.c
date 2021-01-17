@@ -4,32 +4,43 @@
 #include <string.h>
 #include <stdlib.h>
 
-
+#undef NDEBUG
+#include <assert.h>
 
 enum { _STRING_MAGIC_NUMBER_ = (uint16_t)0xf8f };
 
-/**
- * @brief String metadata
- */
-struct __attribute__((packed, aligned(1))) __string_header
+// String metadata
+struct  __attribute__((packed)) __string_header
 {
     size_t length;
     size_t allocated_size;
+#ifdef _STRING_F_CHECK_STRING_PTR_
     uint16_t magic_number;
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
 };
 
 
 
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
-#undef NDEBUG
-#include <assert.h>
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+static inline size_t string_length(const string_t string);
+static inline size_t string_allocated_size(const string_t string);
+
+string_t string_concat_n(string_t* dst, const string_t src, const size_t n);
+string_t string_c_concat_n(string_t* dst, const char* src, const size_t n);
+
+
+
+#ifdef _STRING_F_CHECK_STRING_PTR_
 /**
  * @brief Check string magic number (for security)
  *
  * @param string existing string
  * @return 1 if magic number is valid, otherwise - 0
  */
-inline int __string_check_magic_number(const string_t string)
+static inline int __string_check_magic_number(const string_t string)
 {
     return (((struct __string_header*)(string - sizeof(struct __string_header)))->magic_number == _STRING_MAGIC_NUMBER_);
 }
@@ -43,7 +54,7 @@ inline int __string_check_magic_number(const string_t string)
  * @param ptr string
  * @return pointer to struct field (length)
  */
-inline size_t* const __string_length_address(const string_t ptr)
+static inline size_t* const __string_length_address(const string_t ptr)
 {
     return &(((struct __string_header*)(ptr - sizeof(struct __string_header)))->length); // Warning: unaligned pointer value
 }
@@ -56,7 +67,7 @@ inline size_t* const __string_length_address(const string_t ptr)
  * @param ptr string
  * @return pointer to struct field (allocated_size)
  */
-inline size_t* const __string_allocated_size_address(const string_t ptr)
+static inline size_t* const __string_allocated_size_address(const string_t ptr)
 {
     return &(((struct __string_header*)(ptr - sizeof(struct __string_header)))->allocated_size); // Warning: unaligned pointer value
 }
@@ -81,7 +92,9 @@ string_t __string_allocate(const size_t n)
     struct __string_header string_header = {
         .allocated_size = n + sizeof(struct __string_header),
         .length = 0,
+#ifdef _STRING_F_CHECK_STRING_PTR_
         .magic_number = _STRING_MAGIC_NUMBER_
+#endif // _STRING_F_NO_CHECK_STRING_PTR_
     };
 
     *((struct __string_header*)(raw_memory_block_ptr)) = string_header;
@@ -147,7 +160,7 @@ string_t string_create(const char* c_string)
  */
 string_t string_clone(const string_t string)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -177,7 +190,7 @@ string_t string_reserve(string_t* ptr, const size_t n)
     }
     else
     {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
         assert(("string: invalid pointer!" && __string_check_magic_number(*ptr)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -211,7 +224,7 @@ string_t string_reserve(string_t* ptr, const size_t n)
  */
 string_t string_substring_create(const string_t str, const size_t init_pos, const size_t end_pos)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(str)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -248,7 +261,7 @@ void string_free(string_t* string)
 {
     if (*string != NULL)
     {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
         assert(("string: invalid pointer!" && __string_check_magic_number(*string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
         free(*string - sizeof(struct __string_header));
@@ -264,9 +277,9 @@ void string_free(string_t* string)
  * @param string existing string
  * @return length
  */
-inline size_t string_length(const string_t string)
+static inline size_t string_length(const string_t string)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -281,9 +294,9 @@ inline size_t string_length(const string_t string)
  * @param string existing string
  * @return allocated size in bytes 
  */
-inline size_t string_allocated_size(const string_t string)
+static inline size_t string_allocated_size(const string_t string)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -299,9 +312,9 @@ inline size_t string_allocated_size(const string_t string)
  * @param str2 second string
  * @return 0 if equals, otherwise - other integer values
  */
-inline int string_compare(const string_t str1, const string_t str2)
+static inline int string_compare(const string_t str1, const string_t str2)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(str1)));
     assert(("string: invalid pointer!" && __string_check_magic_number(str2)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
@@ -318,9 +331,9 @@ inline int string_compare(const string_t str1, const string_t str2)
  * @param str2 second C-string
  * @return 0 if equals, otherwise - other integer values
  */
-inline int string_c_compare(const string_t str1, const char* str2)
+static inline int string_c_compare(const string_t str1, const char* str2)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(str1)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -338,7 +351,7 @@ inline int string_c_compare(const string_t str1, const char* str2)
  */
 string_t string_copy(string_t* dst, const string_t src)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
     assert(("string: invalid pointer!" && __string_check_magic_number(src)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
@@ -373,7 +386,7 @@ string_t string_copy(string_t* dst, const string_t src)
  */
 string_t string_copy_n(string_t* dst, const string_t src, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
     assert(("string: invalid pointer!" && __string_check_magic_number(src)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
@@ -410,7 +423,7 @@ string_t string_copy_n(string_t* dst, const string_t src, const size_t n)
  */
 string_t string_c_copy(string_t* dst, const char* src)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -445,7 +458,7 @@ string_t string_c_copy(string_t* dst, const char* src)
  */
 string_t string_c_copy_n(string_t* dst, const char* src, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -479,7 +492,7 @@ string_t string_c_copy_n(string_t* dst, const char* src, const size_t n)
  */
 string_t string_move(string_t* dst, string_t* src)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
     assert(("string: invalid pointer!" && __string_check_magic_number(*src)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
@@ -500,7 +513,7 @@ string_t string_move(string_t* dst, string_t* src)
  */
 string_t string_swap(string_t* str1, string_t* str2)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*str1)));
     assert(("string: invalid pointer!" && __string_check_magic_number(*str2)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
@@ -520,9 +533,9 @@ string_t string_swap(string_t* str1, string_t* str2)
  * @param string existring string
  * @return reversed string 
  */
-inline string_t string_reverse(string_t string)
+static inline string_t string_reverse(string_t string)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -561,7 +574,7 @@ inline string_t string_reverse(string_t string)
  */
 string_t string_concat(string_t* dst, const string_t src)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
     assert(("string: invalid pointer!" && __string_check_magic_number(src)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
@@ -583,7 +596,7 @@ string_t string_concat(string_t* dst, const string_t src)
  */
 string_t string_concat_n(string_t* dst, const string_t src, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
     assert(("string: invalid pointer!" && __string_check_magic_number(src)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
@@ -618,7 +631,7 @@ string_t string_concat_n(string_t* dst, const string_t src, const size_t n)
  */
 string_t string_c_concat(string_t* dst, const char* src)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -639,7 +652,7 @@ string_t string_c_concat(string_t* dst, const char* src)
  */
 string_t string_c_concat_n(string_t* dst, const char* src, const size_t n)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(*dst)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -669,9 +682,9 @@ string_t string_c_concat_n(string_t* dst, const char* src, const size_t n)
  * @param ch character to find
  * @return character (if found), otherwise - STRING_NPOS
  */
-inline long string_char_pos(const string_t string, const char ch)
+static inline long string_char_pos(const string_t string, const char ch)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -690,7 +703,7 @@ inline long string_char_pos(const string_t string, const char ch)
  */
 char* string_char_ptr(const string_t string, const char ch)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -706,9 +719,9 @@ char* string_char_ptr(const string_t string, const char ch)
  * @param index index
  * @return character at index
  */
-inline int string_char_at(const string_t string, const size_t index)
+static inline int string_char_at(const string_t string, const size_t index)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -727,9 +740,9 @@ inline int string_char_at(const string_t string, const size_t index)
  * @param index index
  * @return pointer to character at index
  */
-inline char* string_ptr_at(const string_t string, const size_t index)
+static inline char* string_ptr_at(const string_t string, const size_t index)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -748,9 +761,9 @@ inline char* string_ptr_at(const string_t string, const size_t index)
  * @param pattern substring to find
  * @return position of substring begin
  */
-inline long string_substring_pos(const string_t string, const char* pattern)
+static inline long string_substring_pos(const string_t string, const char* pattern)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -767,9 +780,9 @@ inline long string_substring_pos(const string_t string, const char* pattern)
  * @param pattern substring to find
  * @return pointer to beginning of substring
  */
-inline char* string_substring_ptr(const string_t string, const char* pattern)
+static inline char* string_substring_ptr(const string_t string, const char* pattern)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -787,9 +800,9 @@ inline char* string_substring_ptr(const string_t string, const char* pattern)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtold/
  */
-inline long double string_to_ld(const string_t string, char** endptr)
+static inline long double string_to_ld(const string_t string, char** endptr)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -807,9 +820,9 @@ inline long double string_to_ld(const string_t string, char** endptr)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtod/
  */
-inline double string_to_d(const string_t string, char** endptr)
+static inline double string_to_d(const string_t string, char** endptr)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -827,9 +840,9 @@ inline double string_to_d(const string_t string, char** endptr)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtof/
  */
-inline float string_to_f(const string_t string, char** endptr)
+static inline float string_to_f(const string_t string, char** endptr)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -848,9 +861,9 @@ inline float string_to_f(const string_t string, char** endptr)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtoull/
  */
-inline unsigned long long string_to_ull(const string_t string, char** endptr, int base)
+static inline unsigned long long string_to_ull(const string_t string, char** endptr, int base)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -869,9 +882,9 @@ inline unsigned long long string_to_ull(const string_t string, char** endptr, in
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtoll/
  */
-inline long long string_to_ll(const string_t string, char** endptr, int base)
+static inline long long string_to_ll(const string_t string, char** endptr, int base)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -890,9 +903,9 @@ inline long long string_to_ll(const string_t string, char** endptr, int base)
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtoul/
  */
-inline unsigned long string_to_ul(const string_t string, char** endptr, int base)
+static inline unsigned long string_to_ul(const string_t string, char** endptr, int base)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
@@ -911,11 +924,60 @@ inline unsigned long string_to_ul(const string_t string, char** endptr, int base
  * 
  * source: http://www.cplusplus.com/reference/cstdlib/strtol/
  */
-inline long string_to_l(const string_t string, char** endptr, int base)
+static inline long string_to_l(const string_t string, char** endptr, int base)
 {
-#ifndef _STRING_F_NO_CHECK_STRING_PTR_
+#ifdef _STRING_F_CHECK_STRING_PTR_
     assert(("string: invalid pointer!" && __string_check_magic_number(string)));
 #endif // _STRING_F_NO_CHECK_STRING_PTR_
 
     return strtol(string, endptr, base);
 }
+
+#ifdef __cplusplus
+}
+#endif // extern "C"
+
+
+
+const struct __string_interface string =
+{
+    .create = string_create,
+    .clone = string_clone,
+    .reserve = string_reserve,
+    .substring_create = string_substring_create,
+    .free = string_free,
+
+    .length = string_length,
+    .allocated_size = string_allocated_size,
+
+    .compare = string_compare,
+    .c_compare = string_c_compare,
+
+    .copy = string_copy,
+    .copy_n = string_copy_n,
+    .c_copy = string_c_copy,
+    .c_copy_n = string_c_copy_n,
+
+    .move = string_move,
+    .swap = string_swap,
+    .reverse = string_reverse,
+
+    .concat = string_concat,
+    .concat_n = string_concat_n,
+    .c_concat = string_c_concat,
+    .c_concat_n = string_c_copy_n,
+
+    .char_pos = string_char_pos,
+    .char_ptr = string_char_ptr,
+
+    .substring_pos = string_substring_pos,
+    .substring_ptr = string_substring_ptr,
+
+    .to_ld = string_to_ld,
+    .to_d = string_to_d,
+    .to_f = string_to_f,
+    .to_ull = string_to_ull,
+    .to_ll = string_to_ll,
+    .to_ul = string_to_ul,
+    .to_l = string_to_l
+};
